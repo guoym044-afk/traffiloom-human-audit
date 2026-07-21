@@ -1,24 +1,12 @@
 <!doctype html>
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>TraffiLoom 人工抽检标注者须知</title>
-<style>body{margin:0;font-family:Arial,'Microsoft YaHei',sans-serif;color:#17202a;background:#f4f6f8;line-height:1.65}header{background:#fff;border-bottom:1px solid #d7dde3;padding:22px 28px}header div,main{max-width:980px;margin:auto}h1{margin:0 0 6px;font-size:26px}h2{margin-top:32px;padding-bottom:6px;border-bottom:1px solid #d7dde3;font-size:20px}h3{margin:22px 0 6px;font-size:16px}p,li{font-size:15px}main{background:#fff;margin-top:20px;margin-bottom:40px;padding:28px 34px;border:1px solid #d7dde3;border-radius:6px}.notice{border-left:4px solid #1769aa;background:#eef5fb;padding:12px 16px}.warning{border-left:4px solid #a85d00;background:#fff7e8;padding:12px 16px}table{border-collapse:collapse;width:100%;font-size:14px}th,td{border:1px solid #d7dde3;padding:9px 10px;text-align:left;vertical-align:top}th{background:#f4f7fa}code{background:#eef1f4;padding:2px 5px;border-radius:3px}.button{display:inline-block;background:#1769aa;color:#fff;text-decoration:none;padding:9px 14px;border-radius:4px}.muted{color:#52606d}</style></head><body>
-<header><div><h1>TraffiLoom 人工抽检标注者须知</h1><div class="muted">版本 P1 · 适用于 60 个双盲抽检案例</div></div></header><main>
-<p><a class="button" href="index.html">进入标注页面</a></p>
-<div class="notice"><strong>标注目标：</strong>判断系统输出是否能由页面展示的公开指令、候选连接和规则卡合理支持。你不需要判断道路是否与现实完全一致，也不需要寻找隐藏真值。</div>
-<h2>1. 开始前</h2><ol><li>使用电脑端 Chrome、Edge 或 Firefox。</li><li>填写唯一标注者 ID，例如 <code>reviewer_01</code>，不同标注者不得共用 ID。</li><li>独立完成全部 60 个案例，不与另一位标注者讨论答案。</li><li>进度保存在当前浏览器；不要使用无痕模式或清理浏览器数据。</li><li>完成后导出 JSON 并发送给研究负责人，CSV 仅用于自行检查。</li></ol>
-<h2>2. 页面四部分</h2><table><tr><th>区域</th><th>含义</th><th>关注点</th></tr><tr><td>公开指令</td><td>自然语言拓扑要求。</td><td>要求添加、重映射、保留、拒绝、不操作，还是暂缓？</td></tr><tr><td>公开候选</td><td>可选的局部车道级连接。</td><td>起终道路、车道、方向及结构条件是否匹配。</td></tr><tr><td>规则卡</td><td>检索到的自然语言交通修复知识。</td><td>是否与指令、操作和理由相关。</td></tr><tr><td>系统输出</td><td>决策、注册操作、候选、规则和理由组成的操作契约。</td><td>操作与候选是否共同符合公开证据。</td></tr></table>
-<h2>3. 候选字段速查</h2><table><tr><th>字段</th><th>含义与判断</th></tr><tr><td><code>same_junction</code></td><td>起终道路是否在同一交叉口；<code>false</code> 通常不能直接连接。</td></tr><tr><td><code>geometry</code></td><td>几何是否支持该转向；<code>false</code> 表示证据不足。</td></tr><tr><td><code>existing</code></td><td>连接是否已存在；重复添加通常应为 <code>NO_OP</code>。</td></tr><tr><td><code>uturn</code></td><td>是否掉头；无明确依据时通常应拒绝或暂缓。</td></tr><tr><td><code>protected</code></td><td>是否处于信号控制等受保护上下文。</td></tr><tr><td><code>lane_available</code></td><td>车道是否可用；<code>false</code> 时不应物化。</td></tr><tr><td><code>dir</code></td><td><code>l</code> 左转、<code>r</code> 右转、<code>s</code> 直行、<code>t</code> 掉头、<code>?</code> 不明确。</td></tr></table>
-<h2>4. 六种注册操作</h2><table><tr><th>操作</th><th>用途</th></tr><tr><td><code>ADD_LANE_CONNECTION</code></td><td>唯一确定缺失连接时添加连接。</td></tr><tr><td><code>REMAP_LANE_CONNECTION</code></td><td>方向合理，但车道映射需要替换。</td></tr><tr><td><code>NO_OP</code></td><td>无需修改，例如连接已存在。</td></tr><tr><td><code>REJECT_UNSUPPORTED_UTURN</code></td><td>拒绝缺少依据的掉头连接。</td></tr><tr><td><code>PRESERVE_SIGNAL_CONTROL</code></td><td>修复时保留信号控制。</td></tr><tr><td><code>DEFER_FOR_CLARIFICATION</code></td><td>信息不足以唯一决策，需要补充信息。</td></tr></table>
-<h2>5. 七项标注</h2>
-<h3>1）指令自然性（1–5）</h3><p>只评价指令表达，不评价系统答案。1=严重不自然或难懂；3=基本可理解但生硬；5=自然且清楚。</p>
-<h3>2）公开信息能否支持唯一判断</h3><ul><li><code>yes</code>：足以唯一确定操作和目标。</li><li><code>no</code>：关键信息缺失。</li><li><code>ambiguous</code>：存在多个同样合理的解释或候选。</li></ul>
-<h3>3）注册操作是否合理</h3><p>只判断操作类别；证据不足时暂缓通常合理。</p>
-<h3>4）候选绑定是否合理</h3><p>检查候选 ID 是否与指令中的道路、车道和转向一致。不需要候选时选 <code>not_applicable</code>。</p>
-<h3>5）规则卡是否相关</h3><p>规则应支持当前操作。只支持部分理由选 <code>partially</code>；无需规则时选 <code>not_applicable</code>。</p>
-<h3>6）是否疑似泄漏目标答案</h3><p>正常候选属性、指令中的候选 ID 和系统选择不算泄漏。页面若出现“gold”“正确答案”“oracle”“private reference”等评价者专用信息，才选 <code>yes</code>。</p>
-<h3>7）解释是否支持最终决策</h3><p>理由应引用正确事实、候选属性和规则，并能推导到最终操作。结论正确但理由错误时选 <code>no</code> 或 <code>partially</code>。</p>
-<h2>6. 推荐顺序</h2><ol><li>先读指令，独立判断操作类别。</li><li>检查候选道路、车道、方向和结构属性。</li><li>判断是否存在唯一候选；否则考虑暂缓、拒绝或不操作。</li><li>检查规则卡能否支持该结论。</li><li>最后查看系统输出，分别评价操作、候选、规则和解释。</li></ol>
-<div class="warning"><strong>重要边界：</strong>评价“公开证据下的决策合理性”，不是复原现实道路。不要查询地图、原始 SUMO 网络、论文代码或隐藏真值。</div>
-<h2>7. 常见例子</h2><ul><li>只有一个未存在候选完全匹配明确指令：通常添加连接。</li><li>连接已存在但指令要求添加：通常 <code>NO_OP</code>。</li><li>多个候选都可能是目标但缺少车道信息：通常 <code>DEFER_FOR_CLARIFICATION</code>。</li><li>掉头候选没有许可或明确指令：通常拒绝。</li><li>信号交叉口没有相位修改证据：应保留信号控制。</li></ul>
-<h2>8. 提交检查</h2><ul><li>顶部显示“已完成 60 / 60”。</li><li>标注者 ID 唯一。</li><li>已导出包含标注者 ID 的 JSON。</li><li>没有与另一位标注者交换答案。</li></ul>
-<p><a class="button" href="index.html">阅读完毕，开始标注</a></p></main></body></html>
+<title>TraffiLoom 标注者须知</title>
+<style>body{margin:0;font-family:Arial,'Microsoft YaHei',sans-serif;background:#f4f6f8;color:#17202a;line-height:1.65}main{max-width:900px;margin:24px auto;background:#fff;border:1px solid #d7dde3;border-radius:6px;padding:28px 34px}h1{margin-top:0}h2{font-size:19px;margin-top:28px;border-bottom:1px solid #d7dde3;padding-bottom:5px}table{border-collapse:collapse;width:100%;font-size:14px}th,td{border:1px solid #d7dde3;padding:9px;text-align:left;vertical-align:top}th{background:#f4f7fa}.note{background:#eef5fb;border-left:4px solid #1769aa;padding:12px 15px}.button{display:inline-block;background:#1769aa;color:white;text-decoration:none;padding:9px 14px;border-radius:4px}</style></head><body><main>
+<h1>TraffiLoom 标注者须知</h1>
+<div class="note"><strong>你要做的事情：</strong>根据每张卡片给出的中文指令、候选连接、规则卡和系统输出，表达你对系统判断是否合理的看法。无需了解代码，也不要查询地图、原始网络或隐藏答案。</div>
+<h2>如何阅读一张卡片</h2><ol><li>先读“公开指令”，独立判断它希望系统做什么。</li><li>查看“公开候选连接”，判断道路、车道、转向和约束是否支持该操作。</li><li>查看规则卡是否与当前问题相关。</li><li>最后阅读系统输出，评价它选择的操作、候选和理由。</li></ol>
+<h2>七项评价</h2><table><tr><th>评价项</th><th>判断口径</th></tr><tr><td>指令自然性</td><td>只评价中文指令是否自然、清楚。1 分最低，5 分最高。</td></tr><tr><td>能否明确判断</td><td>足以唯一判断选“是”；信息明显不足选“否”；存在多个合理解释选“存在歧义”。</td></tr><tr><td>操作是否合理</td><td>系统选择新增、重映射、不修改、拒绝、保留信号或暂缓，是否符合指令。</td></tr><tr><td>候选是否合理</td><td>候选编号是否与指令中的道路、车道和转向对应；操作不需要候选时选“不适用”。</td></tr><tr><td>规则是否相关</td><td>规则卡是否支持当前操作；只支持一部分时选“部分符合”。</td></tr><tr><td>是否泄漏答案</td><td>若页面意外出现“隐藏真值、gold、oracle、正确答案”等评价专用信息，选“是”；正常候选属性不算泄漏。</td></tr><tr><td>理由是否充分</td><td>理由是否引用正确事实并支持最终决定。结论看似正确但理由错误，也应选“否”或“部分符合”。</td></tr></table>
+<h2>标注要求</h2><ul><li>两位标注者独立作答，不讨论具体案例。</li><li>拿不准时按自己的判断选择“不确定”或“存在歧义”，并在补充意见中说明。</li><li>不要因为系统置信度高或契约检查通过，就默认语义判断正确。</li></ul>
+<h2>提交</h2><p>填写唯一标注者 ID，完成全部 60 个案例，使顶部显示“已完成 60 / 60”，点击“导出 JSON”并将文件发给研究负责人。请勿使用无痕模式，进度只保存在当前浏览器。</p>
+<p><a class="button" href="index.html">开始标注</a></p>
+</main></body></html>
